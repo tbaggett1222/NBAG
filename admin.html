@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NBAG — Content Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:        #e8e5dc;
+    --ink-soft:   #b8b5ad;
+    --paper:      #1f2a33;
+    --paper-soft: #25313b;
+    --paper-warm: #1a242c;
+    --rule:       #3a4651;
+    --accent:     #c9a55a;
+    --gold:       #d4b370;
+    --danger:     #c05050;
+    --danger-hover: #d06060;
+    --success:    #50a060;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    padding: 2rem;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: 2.4rem;
+    margin-bottom: 0.5rem;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+
+  .subtitle {
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Setup panel */
+  .setup-panel {
+    background: var(--paper-soft);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  .setup-panel h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+  }
+  .setup-panel p {
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+  .setup-panel ol {
+    color: var(--ink-soft);
+    font-size: 0.88rem;
+    line-height: 1.8;
+    padding-left: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+  .setup-panel a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .setup-panel a:hover { text-decoration: underline; }
+
+  .token-row {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+  }
+  .token-input {
+    flex: 1;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 0.7rem 1rem;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .token-input:focus { border-color: var(--accent); }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border: none;
+    border-radius: 4px;
+    padding: 0.7rem 1.4rem;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s, opacity 0.3s;
+  }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-primary { background: var(--accent); color: #1a1a17; }
+  .btn-primary:hover:not(:disabled) { background: var(--gold); }
+  .btn-secondary { background: var(--paper-soft); color: var(--ink); border: 1px solid var(--rule); }
+  .btn-secondary:hover:not(:disabled) { border-color: var(--ink-soft); }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-danger:hover:not(:disabled) { background: var(--danger-hover); }
+  .btn-small { padding: 0.45rem 0.9rem; font-size: 0.68rem; }
+
+  /* Toolbar */
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .post-count {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+  }
+
+  /* Post list */
+  .post-list { display: grid; gap: 0; }
+
+  .post-row {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: 1.5rem;
+    align-items: center;
+    padding: 1.2rem 0;
+    border-bottom: 1px solid var(--rule);
+    transition: padding 0.3s;
+  }
+  .post-row:hover { padding-left: 0.5rem; }
+  .post-row:first-child { border-top: 1px solid var(--rule); }
+
+  .post-type {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .post-info h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    line-height: 1.3;
+    margin-bottom: 0.25rem;
+  }
+  .post-info .post-date {
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+  }
+  .post-info .post-external {
+    font-size: 0.68rem;
+    color: var(--ink-soft);
+    margin-top: 0.2rem;
+  }
+
+  .post-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  /* Editor form */
+  .editor-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+  }
+  .editor-overlay.open { display: flex; }
+
+  .editor {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .editor h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .form-field {
+    margin-bottom: 1.5rem;
+  }
+  .form-field label {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 0.4rem;
+  }
+  .form-field input,
+  .form-field textarea,
+  .form-field select {
+    width: 100%;
+    background: var(--paper-soft);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 0.8rem 1rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .form-field input:focus,
+  .form-field textarea:focus,
+  .form-field select:focus {
+    border-color: var(--accent);
+  }
+  .form-field textarea { resize: vertical; min-height: 80px; }
+  .form-field select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%23b8b5ad' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+  }
+  .form-field select option {
+    background: var(--paper-soft);
+    color: var(--ink);
+  }
+  .form-field .hint {
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    margin-top: 0.3rem;
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .checkbox-row input[type="checkbox"] {
+    width: auto;
+    accent-color: var(--accent);
+  }
+  .checkbox-row label {
+    margin-bottom: 0;
+    font-size: 0.85rem;
+    color: var(--ink);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  /* Status message */
+  .status {
+    padding: 0.8rem 1.2rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+    display: none;
+  }
+  .status.show { display: block; }
+  .status.success { background: rgba(80,160,96,0.15); color: #7dca8d; border: 1px solid rgba(80,160,96,0.3); }
+  .status.error { background: rgba(192,80,80,0.15); color: #e08080; border: 1px solid rgba(192,80,80,0.3); }
+
+  /* Connected indicator */
+  .connected {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    margin-bottom: 1.5rem;
+  }
+  .connected .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+  }
+  .connected .disconnect {
+    margin-left: 0.5rem;
+    color: var(--ink-soft);
+    background: none;
+    border: none;
+    font-size: 0.72rem;
+    cursor: pointer;
+    text-decoration: underline;
+    font-family: 'Inter Tight', sans-serif;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--ink-soft);
+  }
+  .empty-state p { margin-bottom: 1rem; }
+
+  @media (max-width: 700px) {
+    body { padding: 1rem; }
+    .post-row { grid-template-columns: 1fr; gap: 0.5rem; }
+    .post-actions { justify-content: flex-start; }
+    .token-row { flex-direction: column; }
+    .toolbar { flex-direction: column; gap: 1rem; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Content <em>Manager</em></h1>
+  <p class="subtitle">Add, edit, and remove articles, podcasts, links, and other content for the NBAG website.</p>
+
+  <!-- Setup (shown when no token) -->
+  <div class="setup-panel" id="setupPanel">
+    <h2>Connect to GitHub</h2>
+    <p>To publish content directly to your website, you'll need a GitHub Personal Access Token. This is a one-time setup — your token is stored only in your browser.</p>
+    <ol>
+      <li>Go to <a href="https://github.com/settings/tokens?type=beta" target="_blank">GitHub → Settings → Personal Access Tokens</a></li>
+      <li>Click <strong>"Generate new token"</strong></li>
+      <li>Give it a name like "NBAG Content Manager"</li>
+      <li>Under <strong>Repository access</strong>, select <strong>"Only select repositories"</strong> and choose your NBAG repo</li>
+      <li>Under <strong>Permissions → Repository permissions</strong>, set <strong>Contents</strong> to <strong>"Read and write"</strong></li>
+      <li>Click <strong>"Generate token"</strong> and paste it below</li>
+    </ol>
+    <div class="token-row">
+      <input type="password" class="token-input" id="tokenInput" placeholder="Paste your GitHub token here" />
+      <button class="btn btn-primary" id="connectBtn" onclick="connect()">Connect</button>
+    </div>
+  </div>
+
+  <!-- Main UI (shown when connected) -->
+  <div id="mainUI" style="display:none;">
+    <div class="connected" id="connectedInfo">
+      <span class="dot"></span>
+      <span>Connected to <strong id="repoName"></strong></span>
+      <button class="disconnect" onclick="disconnect()">Disconnect</button>
+    </div>
+
+    <div class="status" id="statusMsg"></div>
+
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <span class="post-count" id="postCount"></span>
+      </div>
+      <button class="btn btn-primary" onclick="openEditor()">+ New Post</button>
+    </div>
+
+    <div class="post-list" id="postList"></div>
+  </div>
+</div>
+
+<!-- Editor modal -->
+<div class="editor-overlay" id="editorOverlay" onclick="if(event.target===this)closeEditor()">
+  <div class="editor">
+    <h2 id="editorTitle">New Post</h2>
+    <form id="postForm" onsubmit="savePost(event)">
+      <input type="hidden" id="editIndex" value="-1" />
+
+      <div class="form-field">
+        <label for="postType">Content Type</label>
+        <select id="postType">
+          <option value="Essay">Essay</option>
+          <option value="Article">Article</option>
+          <option value="Commentary">Commentary</option>
+          <option value="Field Note">Field Note</option>
+          <option value="Book">Book</option>
+          <option value="Interview">Interview</option>
+          <option value="Podcast">Podcast</option>
+          <option value="Document">Document</option>
+          <option value="Link">Link</option>
+          <option value="__custom">Other (type your own)...</option>
+        </select>
+      </div>
+      <div class="form-field" id="customTypeField" style="display:none;">
+        <label for="customType">Custom Type Name</label>
+        <input type="text" id="customType" placeholder="e.g. White Paper, Report, Video" />
+      </div>
+
+      <div class="form-field">
+        <label for="postTitle">Title</label>
+        <input type="text" id="postTitle" required placeholder="Enter the title" />
+      </div>
+
+      <div class="form-field">
+        <label for="postExcerpt">Excerpt / Description</label>
+        <textarea id="postExcerpt" required placeholder="A brief summary that appears on the card"></textarea>
+      </div>
+
+      <div class="form-field">
+        <label for="postDate">Date</label>
+        <input type="text" id="postDate" required placeholder="e.g. May 2026" />
+        <div class="hint">Use any format you like — this is displayed as-is on the site.</div>
+      </div>
+
+      <div class="form-field">
+        <label for="postUrl">Link / URL</label>
+        <input type="url" id="postUrl" placeholder="https://example.com/article" />
+        <div class="hint">Leave empty for posts without an external link.</div>
+      </div>
+
+      <div class="form-field">
+        <div class="checkbox-row">
+          <input type="checkbox" id="postExternal" />
+          <label for="postExternal">This links to an external site (opens in new tab)</label>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeEditor()">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="saveBtn">Publish</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const REPO_OWNER = 'tbaggett1222';
+  const REPO_NAME = 'NBAG';
+  const FILE_PATH = 'content.json';
+  const BRANCH = 'main';
+
+  let posts = [];
+  let fileSha = '';
+
+  function getToken() { return localStorage.getItem('nbag_token'); }
+  function setToken(t) { localStorage.setItem('nbag_token', t); }
+  function clearToken() { localStorage.removeItem('nbag_token'); }
+
+  function showStatus(msg, type) {
+    const el = document.getElementById('statusMsg');
+    el.textContent = msg;
+    el.className = 'status show ' + type;
+    setTimeout(() => el.classList.remove('show'), 5000);
+  }
+
+  async function apiRequest(url, options) {
+    const token = getToken();
+    const headers = {
+      'Authorization': 'Bearer ' + token,
+      'Accept': 'application/vnd.github.v3+json',
+      ...options.headers
+    };
+    const res = await fetch(url, { ...options, headers });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.message || 'GitHub API error: ' + res.status);
+    }
+    return res.json();
+  }
+
+  async function connect() {
+    const token = document.getElementById('tokenInput').value.trim();
+    if (!token) return;
+    setToken(token);
+    try {
+      await loadContent();
+      document.getElementById('setupPanel').style.display = 'none';
+      document.getElementById('mainUI').style.display = 'block';
+      document.getElementById('repoName').textContent = REPO_OWNER + '/' + REPO_NAME;
+    } catch (e) {
+      clearToken();
+      showSetupError('Connection failed: ' + e.message);
+    }
+  }
+
+  function showSetupError(msg) {
+    let el = document.getElementById('setupError');
+    if (!el) {
+      el = document.createElement('p');
+      el.id = 'setupError';
+      el.style.cssText = 'color:#e08080;font-size:0.85rem;margin-top:0.8rem;';
+      document.querySelector('.token-row').after(el);
+    }
+    el.textContent = msg;
+  }
+
+  function disconnect() {
+    clearToken();
+    document.getElementById('setupPanel').style.display = 'block';
+    document.getElementById('mainUI').style.display = 'none';
+    document.getElementById('tokenInput').value = '';
+  }
+
+  async function loadContent() {
+    const data = await apiRequest(
+      'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + FILE_PATH + '?ref=' + BRANCH,
+      { method: 'GET' }
+    );
+    fileSha = data.sha;
+    const content = JSON.parse(atob(data.content.replace(/\n/g, '')));
+    posts = content.posts || [];
+    renderPosts();
+  }
+
+  function renderPosts() {
+    const list = document.getElementById('postList');
+    document.getElementById('postCount').textContent = posts.length + ' post' + (posts.length !== 1 ? 's' : '');
+
+    if (posts.length === 0) {
+      list.innerHTML = '<div class="empty-state"><p>No content yet.</p><p>Click <strong>+ New Post</strong> to add your first article, podcast, or link.</p></div>';
+      return;
+    }
+
+    list.innerHTML = posts.map((p, i) => {
+      const ext = p.external && p.url ? '<div class="post-external">↗ External link</div>' : '';
+      return '<div class="post-row">' +
+        '<span class="post-type">' + escHtml(p.type) + '</span>' +
+        '<div class="post-info">' +
+          '<h3>' + escHtml(p.title) + '</h3>' +
+          '<span class="post-date">' + escHtml(p.date) + '</span>' +
+          ext +
+        '</div>' +
+        '<div class="post-actions">' +
+          '<button class="btn btn-secondary btn-small" onclick="editPost(' + i + ')">Edit</button>' +
+          '<button class="btn btn-danger btn-small" onclick="deletePost(' + i + ')">Delete</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function escHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  // Editor
+  function openEditor(index) {
+    const overlay = document.getElementById('editorOverlay');
+    const form = document.getElementById('postForm');
+    form.reset();
+    document.getElementById('customTypeField').style.display = 'none';
+
+    if (index !== undefined && index >= 0) {
+      const p = posts[index];
+      document.getElementById('editorTitle').textContent = 'Edit Post';
+      document.getElementById('editIndex').value = index;
+      document.getElementById('saveBtn').textContent = 'Update';
+
+      const typeSelect = document.getElementById('postType');
+      const matchOption = Array.from(typeSelect.options).find(o => o.value === p.type);
+      if (matchOption) {
+        typeSelect.value = p.type;
+      } else {
+        typeSelect.value = '__custom';
+        document.getElementById('customTypeField').style.display = 'block';
+        document.getElementById('customType').value = p.type;
+      }
+
+      document.getElementById('postTitle').value = p.title;
+      document.getElementById('postExcerpt').value = p.excerpt;
+      document.getElementById('postDate').value = p.date;
+      document.getElementById('postUrl').value = p.url || '';
+      document.getElementById('postExternal').checked = p.external || false;
+    } else {
+      document.getElementById('editorTitle').textContent = 'New Post';
+      document.getElementById('editIndex').value = -1;
+      document.getElementById('saveBtn').textContent = 'Publish';
+    }
+
+    overlay.classList.add('open');
+  }
+
+  function closeEditor() {
+    document.getElementById('editorOverlay').classList.remove('open');
+  }
+
+  function editPost(i) { openEditor(i); }
+
+  async function deletePost(i) {
+    const post = posts[i];
+    if (!confirm('Delete "' + post.title + '"?\n\nThis will remove it from the website.')) return;
+    posts.splice(i, 1);
+    try {
+      await commitContent('Remove: ' + post.title);
+      showStatus('Deleted "' + post.title + '"', 'success');
+      renderPosts();
+    } catch (e) {
+      showStatus('Error deleting: ' + e.message, 'error');
+      await loadContent();
+    }
+  }
+
+  async function savePost(e) {
+    e.preventDefault();
+    const idx = parseInt(document.getElementById('editIndex').value);
+    const typeVal = document.getElementById('postType').value;
+    const type = typeVal === '__custom' ? document.getElementById('customType').value.trim() : typeVal;
+
+    if (!type) { alert('Please enter a content type.'); return; }
+
+    const post = {
+      type: type,
+      title: document.getElementById('postTitle').value.trim(),
+      excerpt: document.getElementById('postExcerpt').value.trim(),
+      date: document.getElementById('postDate').value.trim(),
+      url: document.getElementById('postUrl').value.trim(),
+      external: document.getElementById('postExternal').checked
+    };
+
+    const isNew = idx < 0;
+    if (isNew) {
+      posts.unshift(post);
+    } else {
+      posts[idx] = post;
+    }
+
+    const saveBtn = document.getElementById('saveBtn');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Publishing...';
+
+    try {
+      const action = isNew ? 'Add' : 'Update';
+      await commitContent(action + ': ' + post.title);
+      showStatus((isNew ? 'Published' : 'Updated') + ' "' + post.title + '"', 'success');
+      closeEditor();
+      renderPosts();
+    } catch (e) {
+      showStatus('Error saving: ' + e.message, 'error');
+      await loadContent();
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = isNew ? 'Publish' : 'Update';
+    }
+  }
+
+  async function commitContent(message) {
+    const content = JSON.stringify({ posts: posts }, null, 2) + '\n';
+    const encoded = btoa(unescape(encodeURIComponent(content)));
+    const data = await apiRequest(
+      'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + FILE_PATH,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: message,
+          content: encoded,
+          sha: fileSha,
+          branch: BRANCH
+        })
+      }
+    );
+    fileSha = data.content.sha;
+  }
+
+  // Custom type toggle
+  document.getElementById('postType').addEventListener('change', function() {
+    document.getElementById('customTypeField').style.display =
+      this.value === '__custom' ? 'block' : 'none';
+  });
+
+  // Auto-connect if token exists
+  (function init() {
+    if (getToken()) {
+      document.getElementById('tokenInput').value = '••••••••';
+      connect();
+    }
+  })();
+</script>
+
+</body>
+</html>
