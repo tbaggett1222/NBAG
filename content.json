@@ -1,0 +1,52 @@
+{
+  "posts": [
+    {
+      "type": "Essay",
+      "title": "Regional Security Through Economic Means",
+      "excerpt": "On the central insight of the U.S. 2025 National Strategy — and what it means in practice for governments in the hemisphere.",
+      "date": "March 2026",
+      "url": "",
+      "external": false
+    },
+    {
+      "type": "Field Note",
+      "title": "The Local Economy First",
+      "excerpt": "Why national strategies that ignore community-level economic stability tend to fail — and how leaders can sequence growth so it is felt where citizens live.",
+      "date": "November 2025",
+      "url": "",
+      "external": false
+    },
+    {
+      "type": "Commentary",
+      "title": "A New Mandate in Latin America",
+      "excerpt": "Across the region, populations are electing leaders willing to plan and execute strategically. What that opening requires of the leaders who accept it.",
+      "date": "September 2025",
+      "url": "",
+      "external": false
+    },
+    {
+      "type": "Essay",
+      "title": "Assess, Develop, Execute",
+      "excerpt": "The three-stage discipline at the heart of nation building — and the predictable failure modes when any stage is skipped or rushed.",
+      "date": "June 2025",
+      "url": "",
+      "external": false
+    },
+    {
+      "type": "Book",
+      "title": "From the Author's Desk",
+      "excerpt": "Excerpts and notes from John deVerteuil's published work on national strategy and the practical architecture of nation building.",
+      "date": "February 2025",
+      "url": "",
+      "external": false
+    },
+    {
+      "type": "Interview",
+      "title": "Standing With the Leaders",
+      "excerpt": "On what it means to assist a national leadership in every aspect of their future — and the obligations that go with that posture.",
+      "date": "October 2024",
+      "url": "",
+      "external": false
+    }
+  ]
+}
