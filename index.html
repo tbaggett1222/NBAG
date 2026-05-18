@@ -444,6 +444,57 @@
   .insight-card:hover .insight-link { gap: 1.2rem; }
   .insight-link::after { content: '→'; }
 
+  /* external link indicator */
+  .insight-card[data-external="true"] .insight-link::after { content: '↗'; }
+
+  /* type icon next to category label */
+  .insight-meta .type-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .type-icon svg {
+    width: 14px;
+    height: 14px;
+    fill: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* ---------- FILTER BAR ---------- */
+  .filter-bar {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    max-width: 1300px;
+    margin: 0 auto 2.5rem;
+  }
+  .filter-btn {
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.55rem 1.2rem;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+  }
+  .filter-btn:hover {
+    border-color: var(--ink-soft);
+    color: var(--ink);
+  }
+  .filter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #1a1a17;
+  }
+
+  /* hidden card during filter */
+  .insight-card.hidden {
+    display: none;
+  }
+
   /* ---------- CONTACT ---------- */
   .contact {
     border-top: 1px solid var(--rule);
@@ -798,64 +849,9 @@
       <div class="section-label">Insights &amp; Publications</div>
       <h2 class="section-title">Writing from the <em>long view.</em></h2>
     </div>
-    <a href="#" class="insight-link" style="margin-bottom: 1rem;">All publications</a>
   </div>
-  <div class="insights-grid">
-    <article class="insight-card reveal">
-      <div class="insight-meta">
-        <span class="cat">Essay</span>
-        <span>March 2026</span>
-      </div>
-      <h3 class="insight-title">Regional Security Through Economic Means</h3>
-      <p class="insight-excerpt">On the central insight of the U.S. 2025 National Strategy — and what it means in practice for governments in the hemisphere.</p>
-      <span class="insight-link">Read</span>
-    </article>
-    <article class="insight-card reveal">
-      <div class="insight-meta">
-        <span class="cat">Field Note</span>
-        <span>November 2025</span>
-      </div>
-      <h3 class="insight-title">The Local Economy First</h3>
-      <p class="insight-excerpt">Why national strategies that ignore community-level economic stability tend to fail — and how leaders can sequence growth so it is felt where citizens live.</p>
-      <span class="insight-link">Read</span>
-    </article>
-    <article class="insight-card reveal">
-      <div class="insight-meta">
-        <span class="cat">Commentary</span>
-        <span>September 2025</span>
-      </div>
-      <h3 class="insight-title">A New Mandate in Latin America</h3>
-      <p class="insight-excerpt">Across the region, populations are electing leaders willing to plan and execute strategically. What that opening requires of the leaders who accept it.</p>
-      <span class="insight-link">Read</span>
-    </article>
-    <article class="insight-card reveal">
-      <div class="insight-meta">
-        <span class="cat">Essay</span>
-        <span>June 2025</span>
-      </div>
-      <h3 class="insight-title">Assess, Develop, Execute</h3>
-      <p class="insight-excerpt">The three-stage discipline at the heart of nation building — and the predictable failure modes when any stage is skipped or rushed.</p>
-      <span class="insight-link">Read</span>
-    </article>
-    <article class="insight-card reveal">
-      <div class="insight-meta">
-        <span class="cat">Book</span>
-        <span>February 2025</span>
-      </div>
-      <h3 class="insight-title">From the Author's Desk</h3>
-      <p class="insight-excerpt">Excerpts and notes from John deVerteuil's published work on national strategy and the practical architecture of nation building.</p>
-      <span class="insight-link">Read</span>
-    </article>
-    <article class="insight-card reveal">
-      <div class="insight-meta">
-        <span class="cat">Interview</span>
-        <span>October 2024</span>
-      </div>
-      <h3 class="insight-title">Standing With the Leaders</h3>
-      <p class="insight-excerpt">On what it means to assist a national leadership in every aspect of their future — and the obligations that go with that posture.</p>
-      <span class="insight-link">Read</span>
-    </article>
-  </div>
+  <div class="filter-bar" id="filterBar"></div>
+  <div class="insights-grid" id="insightsGrid"></div>
 </section>
 
 <!-- ============ CONTACT ============ -->
@@ -874,7 +870,7 @@
         </div>
         <div>
           <div class="label">Direct</div>
-          <div class="value">office@nationbuilding.group</div>
+          <div class="value"><a href="mailto:Deverteuiljohn@gmail.com" style="color: var(--ink); text-decoration: none; transition: color 0.3s;">Deverteuiljohn@gmail.com</a></div>
         </div>
         <div>
           <div class="label">Press</div>
@@ -957,7 +953,11 @@
       }
     });
   }, { threshold: 0.12 });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  function observeReveals() {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => observer.observe(el));
+  }
+  observeReveals();
 
   // Form (placeholder)
   function handleSubmit(e) {
@@ -971,6 +971,88 @@
       btn.disabled = false;
     }, 3500);
   }
+
+  // SVG icons by content type
+  const typeIcons = {
+    'Podcast':   '<svg viewBox="0 0 24 24"><path d="M12 1a7 7 0 0 0-7 7v4a7 7 0 0 0 14 0V8a7 7 0 0 0-7-7zm5 11a5 5 0 0 1-10 0V8a5 5 0 0 1 10 0v4zM11 19.93A7.003 7.003 0 0 1 5 13h2a5 5 0 0 0 10 0h2a7.003 7.003 0 0 1-6 6.93V22h3v2H8v-2h3v-2.07z"/></svg>',
+    'Article':   '<svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V5h14v14zM7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z"/></svg>',
+    'Link':      '<svg viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7a5 5 0 0 0 0 10h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4a5 5 0 0 0 0-10z"/></svg>',
+    'default':   ''
+  };
+
+  function getIcon(type) {
+    return typeIcons[type] || typeIcons['default'];
+  }
+
+  function buildCard(post) {
+    const isExternal = post.external && post.url;
+    const href = post.url || '#';
+    const target = isExternal ? ' target="_blank" rel="noopener noreferrer"' : '';
+    const linkText = isExternal ? (post.type === 'Podcast' ? 'Listen' : 'Visit') : 'Read';
+    const icon = getIcon(post.type);
+    const iconHtml = icon ? '<span class="type-icon">' + icon + '</span> ' : '';
+
+    const card = document.createElement('article');
+    card.className = 'insight-card reveal';
+    card.setAttribute('data-type', post.type);
+    if (isExternal) card.setAttribute('data-external', 'true');
+    if (isExternal) {
+      card.addEventListener('click', () => window.open(href, '_blank', 'noopener'));
+    }
+
+    card.innerHTML =
+      '<div class="insight-meta">' +
+        '<span class="cat">' + iconHtml + post.type + '</span>' +
+        '<span>' + post.date + '</span>' +
+      '</div>' +
+      '<h3 class="insight-title">' + post.title + '</h3>' +
+      '<p class="insight-excerpt">' + post.excerpt + '</p>' +
+      '<span class="insight-link">' + linkText + '</span>';
+
+    return card;
+  }
+
+  function buildFilters(posts) {
+    const types = ['All', ...new Set(posts.map(p => p.type))];
+    const bar = document.getElementById('filterBar');
+    bar.innerHTML = '';
+    types.forEach(type => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn' + (type === 'All' ? ' active' : '');
+      btn.textContent = type;
+      btn.addEventListener('click', () => filterPosts(type, bar));
+      bar.appendChild(btn);
+    });
+  }
+
+  function filterPosts(type, bar) {
+    bar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    bar.querySelector('.filter-btn[class]') // fallback
+    Array.from(bar.children).find(b => b.textContent === type).classList.add('active');
+
+    document.querySelectorAll('#insightsGrid .insight-card').forEach(card => {
+      if (type === 'All' || card.getAttribute('data-type') === type) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+  }
+
+  // Load content from JSON
+  fetch('content.json')
+    .then(res => res.json())
+    .then(data => {
+      const grid = document.getElementById('insightsGrid');
+      grid.innerHTML = '';
+      data.posts.forEach(post => grid.appendChild(buildCard(post)));
+      buildFilters(data.posts);
+      observeReveals();
+    })
+    .catch(() => {
+      document.getElementById('insightsGrid').innerHTML =
+        '<p style="padding:2rem;color:var(--ink-soft);">Unable to load content.</p>';
+    });
 </script>
 
 </body>
