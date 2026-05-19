@@ -31,6 +31,7 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     padding: 2rem;
+    min-height: 100vh;
   }
 
   .container { max-width: 900px; margin: 0 auto; }
@@ -49,59 +50,130 @@
     margin-bottom: 2rem;
   }
 
-  /* Setup panel */
-  .setup-panel {
+  /* ---------- AUTH SCREENS ---------- */
+  .auth-screen {
+    display: none;
+    max-width: 440px;
+    margin: 8vh auto 0;
+    text-align: center;
+  }
+  .auth-screen.active { display: block; }
+
+  .auth-screen h1 { margin-bottom: 0.3rem; }
+  .auth-screen .subtitle { margin-bottom: 2.5rem; }
+
+  .auth-box {
     background: var(--paper-soft);
     border: 1px solid var(--rule);
     border-radius: 8px;
-    padding: 2rem;
-    margin-bottom: 2rem;
+    padding: 2.5rem;
+    text-align: left;
   }
-  .setup-panel h2 {
+  .auth-box h2 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.5rem;
     font-weight: 400;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
-  .setup-panel p {
+  .auth-box .auth-desc {
     color: var(--ink-soft);
-    font-size: 0.9rem;
-    line-height: 1.7;
-    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    margin-bottom: 1.8rem;
+    line-height: 1.6;
   }
-  .setup-panel ol {
-    color: var(--ink-soft);
-    font-size: 0.88rem;
-    line-height: 1.8;
-    padding-left: 1.2rem;
-    margin-bottom: 1.5rem;
-  }
-  .setup-panel a {
-    color: var(--accent);
-    text-decoration: none;
-  }
-  .setup-panel a:hover { text-decoration: underline; }
 
-  .token-row {
-    display: flex;
-    gap: 0.8rem;
-    align-items: center;
+  .auth-field {
+    margin-bottom: 1.3rem;
   }
-  .token-input {
-    flex: 1;
+  .auth-field label {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 0.4rem;
+  }
+  .auth-field input {
+    width: 100%;
     background: var(--paper);
     border: 1px solid var(--rule);
     border-radius: 4px;
-    padding: 0.7rem 1rem;
+    padding: 0.8rem 1rem;
     font-family: 'Inter Tight', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: var(--ink);
     outline: none;
     transition: border-color 0.3s;
   }
-  .token-input:focus { border-color: var(--accent); }
+  .auth-field input:focus { border-color: var(--accent); }
+  .auth-field .hint {
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    margin-top: 0.35rem;
+    line-height: 1.5;
+  }
 
-  /* Buttons */
+  .auth-error {
+    color: #e08080;
+    font-size: 0.82rem;
+    margin-bottom: 1rem;
+    display: none;
+  }
+  .auth-error.show { display: block; }
+
+  .auth-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #1a1a17;
+    border: none;
+    border-radius: 4px;
+    padding: 0.9rem;
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 0.5rem;
+  }
+  .auth-btn:hover { background: var(--gold); }
+  .auth-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .auth-divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 1.8rem 0;
+  }
+
+  .setup-steps {
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+    line-height: 1.9;
+    padding-left: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+  .setup-steps a { color: var(--accent); text-decoration: none; }
+  .setup-steps a:hover { text-decoration: underline; }
+
+  .auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+  }
+  .auth-footer button {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 0.78rem;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  /* ---------- MAIN ADMIN UI ---------- */
+  #mainUI { display: none; }
+
   .btn {
     display: inline-flex;
     align-items: center;
@@ -125,7 +197,6 @@
   .btn-danger:hover:not(:disabled) { background: var(--danger-hover); }
   .btn-small { padding: 0.45rem 0.9rem; font-size: 0.68rem; }
 
-  /* Toolbar */
   .toolbar {
     display: flex;
     justify-content: space-between;
@@ -134,17 +205,28 @@
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--rule);
   }
-  .toolbar-left {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  .post-count {
-    font-size: 0.8rem;
-    color: var(--ink-soft);
-  }
+  .toolbar-left { display: flex; align-items: center; gap: 1rem; }
+  .post-count { font-size: 0.8rem; color: var(--ink-soft); }
 
-  /* Post list */
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  .admin-header .sign-out {
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  .admin-header .sign-out:hover { color: var(--ink); }
+
   .post-list { display: grid; gap: 0; }
 
   .post-row {
@@ -165,7 +247,6 @@
     text-transform: uppercase;
     color: var(--accent);
   }
-
   .post-info h3 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.2rem;
@@ -173,22 +254,11 @@
     line-height: 1.3;
     margin-bottom: 0.25rem;
   }
-  .post-info .post-date {
-    font-size: 0.75rem;
-    color: var(--ink-soft);
-  }
-  .post-info .post-external {
-    font-size: 0.68rem;
-    color: var(--ink-soft);
-    margin-top: 0.2rem;
-  }
+  .post-info .post-date { font-size: 0.75rem; color: var(--ink-soft); }
+  .post-info .post-external { font-size: 0.68rem; color: var(--ink-soft); margin-top: 0.2rem; }
+  .post-actions { display: flex; gap: 0.5rem; }
 
-  .post-actions {
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  /* Editor form */
+  /* Editor modal */
   .editor-overlay {
     display: none;
     position: fixed;
@@ -218,9 +288,7 @@
     margin-bottom: 2rem;
   }
 
-  .form-field {
-    margin-bottom: 1.5rem;
-  }
+  .form-field { margin-bottom: 1.5rem; }
   .form-field label {
     display: block;
     font-size: 0.7rem;
@@ -245,9 +313,7 @@
   }
   .form-field input:focus,
   .form-field textarea:focus,
-  .form-field select:focus {
-    border-color: var(--accent);
-  }
+  .form-field select:focus { border-color: var(--accent); }
   .form-field textarea { resize: vertical; min-height: 80px; }
   .form-field select {
     -webkit-appearance: none;
@@ -258,32 +324,12 @@
     background-repeat: no-repeat;
     background-position: right 0.8rem center;
   }
-  .form-field select option {
-    background: var(--paper-soft);
-    color: var(--ink);
-  }
-  .form-field .hint {
-    font-size: 0.75rem;
-    color: var(--ink-soft);
-    margin-top: 0.3rem;
-  }
+  .form-field select option { background: var(--paper-soft); color: var(--ink); }
+  .form-field .hint { font-size: 0.75rem; color: var(--ink-soft); margin-top: 0.3rem; }
 
-  .checkbox-row {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-  }
-  .checkbox-row input[type="checkbox"] {
-    width: auto;
-    accent-color: var(--accent);
-  }
-  .checkbox-row label {
-    margin-bottom: 0;
-    font-size: 0.85rem;
-    color: var(--ink);
-    text-transform: none;
-    letter-spacing: 0;
-  }
+  .checkbox-row { display: flex; align-items: center; gap: 0.6rem; }
+  .checkbox-row input[type="checkbox"] { width: auto; accent-color: var(--accent); }
+  .checkbox-row label { margin-bottom: 0; font-size: 0.85rem; color: var(--ink); text-transform: none; letter-spacing: 0; }
 
   .form-actions {
     display: flex;
@@ -294,7 +340,6 @@
     border-top: 1px solid var(--rule);
   }
 
-  /* Status message */
   .status {
     padding: 0.8rem 1.2rem;
     border-radius: 4px;
@@ -305,32 +350,6 @@
   .status.show { display: block; }
   .status.success { background: rgba(80,160,96,0.15); color: #7dca8d; border: 1px solid rgba(80,160,96,0.3); }
   .status.error { background: rgba(192,80,80,0.15); color: #e08080; border: 1px solid rgba(192,80,80,0.3); }
-
-  /* Connected indicator */
-  .connected {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.78rem;
-    color: var(--ink-soft);
-    margin-bottom: 1.5rem;
-  }
-  .connected .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--success);
-  }
-  .connected .disconnect {
-    margin-left: 0.5rem;
-    color: var(--ink-soft);
-    background: none;
-    border: none;
-    font-size: 0.72rem;
-    cursor: pointer;
-    text-decoration: underline;
-    font-family: 'Inter Tight', sans-serif;
-  }
 
   .empty-state {
     text-align: center;
@@ -343,53 +362,139 @@
     body { padding: 1rem; }
     .post-row { grid-template-columns: 1fr; gap: 0.5rem; }
     .post-actions { justify-content: flex-start; }
-    .token-row { flex-direction: column; }
     .toolbar { flex-direction: column; gap: 1rem; align-items: flex-start; }
+    .auth-screen { margin-top: 4vh; }
+    .auth-box { padding: 1.5rem; }
   }
 </style>
 </head>
 <body>
 
-<div class="container">
+<!-- ========== SCREEN 1: LOGIN ========== -->
+<div class="auth-screen active" id="loginScreen">
   <h1>Content <em>Manager</em></h1>
-  <p class="subtitle">Add, edit, and remove articles, podcasts, links, and other content for the NBAG website.</p>
+  <p class="subtitle">NBAG — Insights &amp; Publications</p>
 
-  <!-- Setup (shown when no token) -->
-  <div class="setup-panel" id="setupPanel">
-    <h2>Connect to GitHub</h2>
-    <p>To publish content directly to your website, you'll need a GitHub Personal Access Token. This is a one-time setup — your token is stored only in your browser.</p>
-    <ol>
-      <li>Go to <a href="https://github.com/settings/tokens?type=beta" target="_blank">GitHub → Settings → Personal Access Tokens</a></li>
+  <div class="auth-box">
+    <h2>Sign In</h2>
+    <p class="auth-desc">Enter your admin password to manage content.</p>
+
+    <div class="auth-error" id="loginError"></div>
+
+    <form onsubmit="handleLogin(event)">
+      <div class="auth-field">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" required placeholder="Enter your password" autofocus />
+      </div>
+      <button type="submit" class="auth-btn" id="loginBtn">Sign In</button>
+    </form>
+
+    <div class="auth-footer">
+      First time? <button onclick="showScreen('setupScreen')">Set up admin access</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SCREEN 2: FIRST-TIME SETUP ========== -->
+<div class="auth-screen" id="setupScreen">
+  <h1>Content <em>Manager</em></h1>
+  <p class="subtitle">One-time setup</p>
+
+  <div class="auth-box">
+    <h2>Set Up Admin Access</h2>
+    <p class="auth-desc">This connects the content manager to your GitHub repository. You only need to do this once.</p>
+
+    <p class="auth-desc" style="margin-bottom:0.5rem;"><strong style="color:var(--ink);">Step 1 — Get a GitHub token:</strong></p>
+    <ol class="setup-steps">
+      <li>Go to <a href="https://github.com/settings/tokens?type=beta" target="_blank">GitHub → Personal Access Tokens</a></li>
       <li>Click <strong>"Generate new token"</strong></li>
-      <li>Give it a name like "NBAG Content Manager"</li>
-      <li>Under <strong>Repository access</strong>, select <strong>"Only select repositories"</strong> and choose your NBAG repo</li>
-      <li>Under <strong>Permissions → Repository permissions</strong>, set <strong>Contents</strong> to <strong>"Read and write"</strong></li>
-      <li>Click <strong>"Generate token"</strong> and paste it below</li>
+      <li>Name it <strong>"NBAG Content Manager"</strong></li>
+      <li>Set expiration to <strong>"No expiration"</strong> (or your preference)</li>
+      <li>Under Repository access → <strong>"Only select repositories"</strong> → choose <strong>NBAG</strong></li>
+      <li>Under Permissions → Contents → set to <strong>"Read and write"</strong></li>
+      <li>Click <strong>"Generate token"</strong> and copy it</li>
     </ol>
-    <div class="token-row">
-      <input type="password" class="token-input" id="tokenInput" placeholder="Paste your GitHub token here" />
-      <button class="btn btn-primary" id="connectBtn" onclick="connect()">Connect</button>
+
+    <div class="auth-error" id="setupError"></div>
+
+    <form onsubmit="handleSetup(event)">
+      <div class="auth-field">
+        <label for="setupToken">GitHub Token</label>
+        <input type="password" id="setupToken" required placeholder="Paste your token here" />
+        <div class="hint">This will be encrypted with your password and stored in your browser.</div>
+      </div>
+
+      <hr class="auth-divider" />
+
+      <p class="auth-desc"><strong style="color:var(--ink);">Step 2 — Choose a password for John:</strong></p>
+
+      <div class="auth-field">
+        <label for="setupPassword">Admin Password</label>
+        <input type="password" id="setupPassword" required placeholder="Choose a password" minlength="4" />
+        <div class="hint">This is what John will type to sign in. Keep it simple and memorable.</div>
+      </div>
+      <div class="auth-field">
+        <label for="setupPasswordConfirm">Confirm Password</label>
+        <input type="password" id="setupPasswordConfirm" required placeholder="Type it again" />
+      </div>
+
+      <button type="submit" class="auth-btn" id="setupBtn">Complete Setup</button>
+    </form>
+
+    <div class="auth-footer">
+      Already set up? <button onclick="showScreen('loginScreen')">Sign in</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SCREEN 3: ADMIN DASHBOARD ========== -->
+<div class="container" id="mainUI">
+  <div class="admin-header">
+    <div>
+      <h1>Content <em>Manager</em></h1>
+      <p class="subtitle">Add, edit, and remove articles, podcasts, links, and other content.</p>
+    </div>
+    <div style="display:flex;gap:1rem;align-items:center;">
+      <button class="sign-out" onclick="openChangePassword()">Change Password</button>
+      <button class="sign-out" onclick="signOut()">Sign Out</button>
     </div>
   </div>
 
-  <!-- Main UI (shown when connected) -->
-  <div id="mainUI" style="display:none;">
-    <div class="connected" id="connectedInfo">
-      <span class="dot"></span>
-      <span>Connected to <strong id="repoName"></strong></span>
-      <button class="disconnect" onclick="disconnect()">Disconnect</button>
+  <div class="status" id="statusMsg"></div>
+
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <span class="post-count" id="postCount"></span>
     </div>
+    <button class="btn btn-primary" onclick="openEditor()">+ New Post</button>
+  </div>
 
-    <div class="status" id="statusMsg"></div>
+  <div class="post-list" id="postList"></div>
+</div>
 
-    <div class="toolbar">
-      <div class="toolbar-left">
-        <span class="post-count" id="postCount"></span>
+<!-- Change Password modal -->
+<div class="editor-overlay" id="passwordOverlay" onclick="if(event.target===this)closeChangePassword()">
+  <div class="editor" style="max-width:440px;">
+    <h2>Change Password</h2>
+    <div class="auth-error" id="changePwError"></div>
+    <form onsubmit="handleChangePassword(event)">
+      <div class="form-field">
+        <label for="currentPw">Current Password</label>
+        <input type="password" id="currentPw" required placeholder="Enter your current password" style="font-family:'Inter Tight',sans-serif;font-size:0.95rem;" />
       </div>
-      <button class="btn btn-primary" onclick="openEditor()">+ New Post</button>
-    </div>
-
-    <div class="post-list" id="postList"></div>
+      <div class="form-field">
+        <label for="newPw">New Password</label>
+        <input type="password" id="newPw" required placeholder="Choose a new password" minlength="4" style="font-family:'Inter Tight',sans-serif;font-size:0.95rem;" />
+      </div>
+      <div class="form-field">
+        <label for="newPwConfirm">Confirm New Password</label>
+        <input type="password" id="newPwConfirm" required placeholder="Type it again" style="font-family:'Inter Tight',sans-serif;font-size:0.95rem;" />
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeChangePassword()">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="changePwBtn">Update Password</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -433,7 +538,7 @@
       <div class="form-field">
         <label for="postDate">Date</label>
         <input type="text" id="postDate" required placeholder="e.g. May 2026" />
-        <div class="hint">Use any format you like — this is displayed as-is on the site.</div>
+        <div class="hint">Use any format — this is displayed as-is on the site.</div>
       </div>
 
       <div class="form-field">
@@ -462,25 +567,148 @@
   const REPO_NAME = 'NBAG';
   const FILE_PATH = 'content.json';
   const BRANCH = 'main';
+  const STORAGE_KEY = 'nbag_admin';
 
   let posts = [];
   let fileSha = '';
+  let activeToken = '';
 
-  function getToken() { return localStorage.getItem('nbag_token'); }
-  function setToken(t) { localStorage.setItem('nbag_token', t); }
-  function clearToken() { localStorage.removeItem('nbag_token'); }
-
-  function showStatus(msg, type) {
-    const el = document.getElementById('statusMsg');
-    el.textContent = msg;
-    el.className = 'status show ' + type;
-    setTimeout(() => el.classList.remove('show'), 5000);
+  // ---- Encryption helpers (Web Crypto API) ----
+  async function deriveKey(password, salt) {
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: salt, iterations: 100000, hash: 'SHA-256' },
+      keyMaterial,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['encrypt', 'decrypt']
+    );
   }
 
+  async function encryptToken(token, password) {
+    const enc = new TextEncoder();
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await deriveKey(password, salt);
+    const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, enc.encode(token));
+    return {
+      salt: btoa(String.fromCharCode(...salt)),
+      iv: btoa(String.fromCharCode(...iv)),
+      data: btoa(String.fromCharCode(...new Uint8Array(ciphertext)))
+    };
+  }
+
+  async function decryptToken(stored, password) {
+    const salt = Uint8Array.from(atob(stored.salt), c => c.charCodeAt(0));
+    const iv = Uint8Array.from(atob(stored.iv), c => c.charCodeAt(0));
+    const data = Uint8Array.from(atob(stored.data), c => c.charCodeAt(0));
+    const key = await deriveKey(password, salt);
+    const plaintext = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, key, data);
+    return new TextDecoder().decode(plaintext);
+  }
+
+  function getStored() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch { return null; }
+  }
+
+  // ---- Screen management ----
+  function showScreen(id) {
+    document.querySelectorAll('.auth-screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('mainUI').style.display = 'none';
+    const el = document.getElementById(id);
+    if (el) el.classList.add('active');
+    if (id === 'mainUI') document.getElementById('mainUI').style.display = 'block';
+  }
+
+  // ---- Setup flow ----
+  async function handleSetup(e) {
+    e.preventDefault();
+    const token = document.getElementById('setupToken').value.trim();
+    const pw = document.getElementById('setupPassword').value;
+    const pwConfirm = document.getElementById('setupPasswordConfirm').value;
+    const errEl = document.getElementById('setupError');
+    errEl.classList.remove('show');
+
+    if (pw !== pwConfirm) {
+      errEl.textContent = 'Passwords do not match.';
+      errEl.classList.add('show');
+      return;
+    }
+
+    const btn = document.getElementById('setupBtn');
+    btn.disabled = true;
+    btn.textContent = 'Verifying...';
+
+    try {
+      const res = await fetch('https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + FILE_PATH + '?ref=' + BRANCH, {
+        headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github.v3+json' }
+      });
+      if (!res.ok) throw new Error('Could not connect — check that the token is correct and has access to the NBAG repo.');
+
+      const encrypted = await encryptToken(token, pw);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(encrypted));
+
+      activeToken = token;
+      const data = await res.json();
+      fileSha = data.sha;
+      posts = JSON.parse(atob(data.content.replace(/\n/g, ''))).posts || [];
+
+      showScreen('mainUI');
+      renderPosts();
+    } catch (err) {
+      errEl.textContent = err.message;
+      errEl.classList.add('show');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Complete Setup';
+    }
+  }
+
+  // ---- Login flow ----
+  async function handleLogin(e) {
+    e.preventDefault();
+    const pw = document.getElementById('loginPassword').value;
+    const errEl = document.getElementById('loginError');
+    const stored = getStored();
+    errEl.classList.remove('show');
+
+    if (!stored) {
+      errEl.textContent = 'No admin account found. Please complete the setup first.';
+      errEl.classList.add('show');
+      return;
+    }
+
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true;
+    btn.textContent = 'Signing in...';
+
+    try {
+      const token = await decryptToken(stored, pw);
+      activeToken = token;
+      await loadContent();
+      showScreen('mainUI');
+    } catch {
+      errEl.textContent = 'Incorrect password. Please try again.';
+      errEl.classList.add('show');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Sign In';
+    }
+  }
+
+  function signOut() {
+    activeToken = '';
+    posts = [];
+    fileSha = '';
+    document.getElementById('loginPassword').value = '';
+    showScreen('loginScreen');
+  }
+
+  // ---- GitHub API ----
   async function apiRequest(url, options) {
-    const token = getToken();
     const headers = {
-      'Authorization': 'Bearer ' + token,
+      'Authorization': 'Bearer ' + activeToken,
       'Accept': 'application/vnd.github.v3+json',
       ...options.headers
     };
@@ -490,39 +718,6 @@
       throw new Error(body.message || 'GitHub API error: ' + res.status);
     }
     return res.json();
-  }
-
-  async function connect() {
-    const token = document.getElementById('tokenInput').value.trim();
-    if (!token) return;
-    setToken(token);
-    try {
-      await loadContent();
-      document.getElementById('setupPanel').style.display = 'none';
-      document.getElementById('mainUI').style.display = 'block';
-      document.getElementById('repoName').textContent = REPO_OWNER + '/' + REPO_NAME;
-    } catch (e) {
-      clearToken();
-      showSetupError('Connection failed: ' + e.message);
-    }
-  }
-
-  function showSetupError(msg) {
-    let el = document.getElementById('setupError');
-    if (!el) {
-      el = document.createElement('p');
-      el.id = 'setupError';
-      el.style.cssText = 'color:#e08080;font-size:0.85rem;margin-top:0.8rem;';
-      document.querySelector('.token-row').after(el);
-    }
-    el.textContent = msg;
-  }
-
-  function disconnect() {
-    clearToken();
-    document.getElementById('setupPanel').style.display = 'block';
-    document.getElementById('mainUI').style.display = 'none';
-    document.getElementById('tokenInput').value = '';
   }
 
   async function loadContent() {
@@ -535,6 +730,30 @@
     posts = content.posts || [];
     renderPosts();
   }
+
+  async function commitContent(message) {
+    const content = JSON.stringify({ posts: posts }, null, 2) + '\n';
+    const encoded = btoa(unescape(encodeURIComponent(content)));
+    const data = await apiRequest(
+      'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + FILE_PATH,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: message, content: encoded, sha: fileSha, branch: BRANCH })
+      }
+    );
+    fileSha = data.content.sha;
+  }
+
+  // ---- UI rendering ----
+  function showStatus(msg, type) {
+    const el = document.getElementById('statusMsg');
+    el.textContent = msg;
+    el.className = 'status show ' + type;
+    setTimeout(() => el.classList.remove('show'), 5000);
+  }
+
+  function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
   function renderPosts() {
     const list = document.getElementById('postList');
@@ -551,28 +770,19 @@
         '<span class="post-type">' + escHtml(p.type) + '</span>' +
         '<div class="post-info">' +
           '<h3>' + escHtml(p.title) + '</h3>' +
-          '<span class="post-date">' + escHtml(p.date) + '</span>' +
-          ext +
+          '<span class="post-date">' + escHtml(p.date) + '</span>' + ext +
         '</div>' +
         '<div class="post-actions">' +
           '<button class="btn btn-secondary btn-small" onclick="editPost(' + i + ')">Edit</button>' +
           '<button class="btn btn-danger btn-small" onclick="deletePost(' + i + ')">Delete</button>' +
-        '</div>' +
-      '</div>';
+        '</div></div>';
     }).join('');
   }
 
-  function escHtml(s) {
-    const d = document.createElement('div');
-    d.textContent = s;
-    return d.innerHTML;
-  }
-
-  // Editor
+  // ---- CRUD operations ----
   function openEditor(index) {
     const overlay = document.getElementById('editorOverlay');
-    const form = document.getElementById('postForm');
-    form.reset();
+    document.getElementById('postForm').reset();
     document.getElementById('customTypeField').style.display = 'none';
 
     if (index !== undefined && index >= 0) {
@@ -580,17 +790,13 @@
       document.getElementById('editorTitle').textContent = 'Edit Post';
       document.getElementById('editIndex').value = index;
       document.getElementById('saveBtn').textContent = 'Update';
-
-      const typeSelect = document.getElementById('postType');
-      const matchOption = Array.from(typeSelect.options).find(o => o.value === p.type);
-      if (matchOption) {
-        typeSelect.value = p.type;
-      } else {
-        typeSelect.value = '__custom';
+      const sel = document.getElementById('postType');
+      const match = Array.from(sel.options).find(o => o.value === p.type);
+      if (match) { sel.value = p.type; } else {
+        sel.value = '__custom';
         document.getElementById('customTypeField').style.display = 'block';
         document.getElementById('customType').value = p.type;
       }
-
       document.getElementById('postTitle').value = p.title;
       document.getElementById('postExcerpt').value = p.excerpt;
       document.getElementById('postDate').value = p.date;
@@ -601,14 +807,10 @@
       document.getElementById('editIndex').value = -1;
       document.getElementById('saveBtn').textContent = 'Publish';
     }
-
     overlay.classList.add('open');
   }
 
-  function closeEditor() {
-    document.getElementById('editorOverlay').classList.remove('open');
-  }
-
+  function closeEditor() { document.getElementById('editorOverlay').classList.remove('open'); }
   function editPost(i) { openEditor(i); }
 
   async function deletePost(i) {
@@ -630,7 +832,6 @@
     const idx = parseInt(document.getElementById('editIndex').value);
     const typeVal = document.getElementById('postType').value;
     const type = typeVal === '__custom' ? document.getElementById('customType').value.trim() : typeVal;
-
     if (!type) { alert('Please enter a content type.'); return; }
 
     const post = {
@@ -643,19 +844,14 @@
     };
 
     const isNew = idx < 0;
-    if (isNew) {
-      posts.unshift(post);
-    } else {
-      posts[idx] = post;
-    }
+    if (isNew) { posts.unshift(post); } else { posts[idx] = post; }
 
     const saveBtn = document.getElementById('saveBtn');
     saveBtn.disabled = true;
     saveBtn.textContent = 'Publishing...';
 
     try {
-      const action = isNew ? 'Add' : 'Update';
-      await commitContent(action + ': ' + post.title);
+      await commitContent((isNew ? 'Add' : 'Update') + ': ' + post.title);
       showStatus((isNew ? 'Published' : 'Updated') + ' "' + post.title + '"', 'success');
       closeEditor();
       renderPosts();
@@ -668,36 +864,64 @@
     }
   }
 
-  async function commitContent(message) {
-    const content = JSON.stringify({ posts: posts }, null, 2) + '\n';
-    const encoded = btoa(unescape(encodeURIComponent(content)));
-    const data = await apiRequest(
-      'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + FILE_PATH,
-      {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: message,
-          content: encoded,
-          sha: fileSha,
-          branch: BRANCH
-        })
-      }
-    );
-    fileSha = data.content.sha;
+  // ---- Change Password ----
+  function openChangePassword() {
+    document.getElementById('passwordOverlay').classList.add('open');
+    document.getElementById('changePwError').classList.remove('show');
+    document.getElementById('currentPw').value = '';
+    document.getElementById('newPw').value = '';
+    document.getElementById('newPwConfirm').value = '';
   }
 
-  // Custom type toggle
+  function closeChangePassword() {
+    document.getElementById('passwordOverlay').classList.remove('open');
+  }
+
+  async function handleChangePassword(e) {
+    e.preventDefault();
+    const currentPw = document.getElementById('currentPw').value;
+    const newPw = document.getElementById('newPw').value;
+    const newPwConfirm = document.getElementById('newPwConfirm').value;
+    const errEl = document.getElementById('changePwError');
+    const btn = document.getElementById('changePwBtn');
+    errEl.classList.remove('show');
+
+    if (newPw !== newPwConfirm) {
+      errEl.textContent = 'New passwords do not match.';
+      errEl.classList.add('show');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Updating...';
+
+    try {
+      const stored = getStored();
+      const token = await decryptToken(stored, currentPw);
+      const encrypted = await encryptToken(token, newPw);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(encrypted));
+      closeChangePassword();
+      showStatus('Password updated successfully.', 'success');
+    } catch {
+      errEl.textContent = 'Current password is incorrect.';
+      errEl.classList.add('show');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Update Password';
+    }
+  }
+
   document.getElementById('postType').addEventListener('change', function() {
-    document.getElementById('customTypeField').style.display =
-      this.value === '__custom' ? 'block' : 'none';
+    document.getElementById('customTypeField').style.display = this.value === '__custom' ? 'block' : 'none';
   });
 
-  // Auto-connect if token exists
+  // ---- Init: show login if setup exists, otherwise show setup ----
   (function init() {
-    if (getToken()) {
-      document.getElementById('tokenInput').value = '••••••••';
-      connect();
+    const stored = getStored();
+    if (stored) {
+      showScreen('loginScreen');
+    } else {
+      showScreen('setupScreen');
     }
   })();
 </script>
