@@ -454,7 +454,10 @@
       <h1>Content <em>Manager</em></h1>
       <p class="subtitle">Add, edit, and remove articles, podcasts, links, and other content.</p>
     </div>
-    <button class="sign-out" onclick="signOut()">Sign Out</button>
+    <div style="display:flex;gap:1rem;align-items:center;">
+      <button class="sign-out" onclick="openChangePassword()">Change Password</button>
+      <button class="sign-out" onclick="signOut()">Sign Out</button>
+    </div>
   </div>
 
   <div class="status" id="statusMsg"></div>
@@ -467,6 +470,32 @@
   </div>
 
   <div class="post-list" id="postList"></div>
+</div>
+
+<!-- Change Password modal -->
+<div class="editor-overlay" id="passwordOverlay" onclick="if(event.target===this)closeChangePassword()">
+  <div class="editor" style="max-width:440px;">
+    <h2>Change Password</h2>
+    <div class="auth-error" id="changePwError"></div>
+    <form onsubmit="handleChangePassword(event)">
+      <div class="form-field">
+        <label for="currentPw">Current Password</label>
+        <input type="password" id="currentPw" required placeholder="Enter your current password" style="font-family:'Inter Tight',sans-serif;font-size:0.95rem;" />
+      </div>
+      <div class="form-field">
+        <label for="newPw">New Password</label>
+        <input type="password" id="newPw" required placeholder="Choose a new password" minlength="4" style="font-family:'Inter Tight',sans-serif;font-size:0.95rem;" />
+      </div>
+      <div class="form-field">
+        <label for="newPwConfirm">Confirm New Password</label>
+        <input type="password" id="newPwConfirm" required placeholder="Type it again" style="font-family:'Inter Tight',sans-serif;font-size:0.95rem;" />
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeChangePassword()">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="changePwBtn">Update Password</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <!-- Editor modal -->
@@ -832,6 +861,53 @@
     } finally {
       saveBtn.disabled = false;
       saveBtn.textContent = isNew ? 'Publish' : 'Update';
+    }
+  }
+
+  // ---- Change Password ----
+  function openChangePassword() {
+    document.getElementById('passwordOverlay').classList.add('open');
+    document.getElementById('changePwError').classList.remove('show');
+    document.getElementById('currentPw').value = '';
+    document.getElementById('newPw').value = '';
+    document.getElementById('newPwConfirm').value = '';
+  }
+
+  function closeChangePassword() {
+    document.getElementById('passwordOverlay').classList.remove('open');
+  }
+
+  async function handleChangePassword(e) {
+    e.preventDefault();
+    const currentPw = document.getElementById('currentPw').value;
+    const newPw = document.getElementById('newPw').value;
+    const newPwConfirm = document.getElementById('newPwConfirm').value;
+    const errEl = document.getElementById('changePwError');
+    const btn = document.getElementById('changePwBtn');
+    errEl.classList.remove('show');
+
+    if (newPw !== newPwConfirm) {
+      errEl.textContent = 'New passwords do not match.';
+      errEl.classList.add('show');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Updating...';
+
+    try {
+      const stored = getStored();
+      const token = await decryptToken(stored, currentPw);
+      const encrypted = await encryptToken(token, newPw);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(encrypted));
+      closeChangePassword();
+      showStatus('Password updated successfully.', 'success');
+    } catch {
+      errEl.textContent = 'Current password is incorrect.';
+      errEl.classList.add('show');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Update Password';
     }
   }
 
